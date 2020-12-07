@@ -1,4 +1,4 @@
-FROM node:14-alpine as base
+FROM node:12-alpine as base
 
 # Build layer
 FROM base as build
