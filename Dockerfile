@@ -1,15 +1,19 @@
-FROM node:12-alpine AS base
-WORKDIR /app
+FROM node:14-alpine as base
+
+# Build layer
+FROM base as build
+WORKDIR /build
 COPY package*.json ./
-ENV NODE_ENV=production
-RUN npm i && npm cache clean --force
+RUN npm i
 COPY . .
-RUN npm run build
+RUN npm run build && npm prune --production
 
-FROM node:12-alpine AS release
-COPY --from=base /app/package*.json ./
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/dist ./dist
-
+# Release layer
+FROM base
+WORKDIR ../app
+COPY package*.json ./
+COPY --from=build /build/node_modules ./node_modules
+COPY --from=build /build/dist ./dist
+USER node
 EXPOSE 8080
 ENTRYPOINT ["node", "dist/main.js"]

@@ -1,6 +1,10 @@
+# Own folders will be created during the build process
 node_modules
 dist
+
+# It has no business logic required by production app
 test
+.elasticbeanstalk
 README.md
 .eslintrc
 .gitignore
